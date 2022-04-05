@@ -14,13 +14,14 @@ const MovieCard = (props) => {
   const [liked, setLiked] = useState(false);
   const [likes, setLikes] = useState([]);
   const { movie, showDeleteIcon, onDeleteMovie } = props || {};
+  const { Title, Poster, Year } = movie || {};
 
   const handleGetLikes = useCallback(() => {
     const likes = localStorage.getItem('likes') || [];
     const parsedLikes = likes.length ? JSON.parse(likes) : [];
 
     parsedLikes.forEach((val) => {
-      if (val.id === movie.id) {
+      if (val.imdbID === movie.imdbID) {
         setLiked(true);
       }
     });
@@ -31,7 +32,7 @@ const MovieCard = (props) => {
 
   const handleDeleteMovie = () => {
     let newLikes = handleGetLikes();
-    newLikes = newLikes.filter((val) => val.id !== movie.id);
+    newLikes = newLikes.filter((val) => val.imdbID !== movie.imdbID);
     localStorage.setItem('likes', JSON.stringify(newLikes));
     onDeleteMovie(newLikes);
     setLiked(false);
@@ -40,7 +41,7 @@ const MovieCard = (props) => {
   const handleClickMovie = () => {
     localStorage.setItem('movieData', JSON.stringify(movie));
     // Router.push({
-    //   pathname: `/${movie.id}`,
+    //   pathname: `/${movie.imdbID}`,
     // });
   };
 
@@ -64,14 +65,14 @@ const MovieCard = (props) => {
     <div className={'movie-card'}>
       <div
         className={'movie-card-container'}
-        style={{ backgroundImage: `url(${movie.imageUrl})` }}
+        style={{ backgroundImage: `url(${Poster})` }}
       >
         <div className={'movie-card-header'}>
-          <h4>{`${movie.title} (${movie.year})`}</h4>
-          <div className={'movie-card-rating'}>
+          <h4>{`${Title} (${Year})`}</h4>
+          {/* <div className={'movie-card-rating'}>
             <img alt="" src={ratingIcon} width={16} height={16} />
             <p>{`x${movie.rating}`}</p>
-          </div>
+          </div> */}
         </div>
         <div className={'movie-card-content'}>
           {!showDeleteIcon ? (

@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { useCallback, useEffect, useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // assets
 import homeIcon from './home-icon.png';
@@ -10,7 +12,7 @@ import './App.scss';
 // components
 import HeaderSidebar from '../src/components/HeaderSidebar';
 import MovieCard from '../src/components/MovieCard/MovieCard';
-import axios from 'axios';
+import MovieListPage from './pages/MyList';
 
 export default function App() {
   const [movieLists, setMovieLists] = useState([]);
@@ -34,10 +36,10 @@ export default function App() {
   const handleInfiniteScroll = async (event) => {
     const { scrollHeight, scrollTop, offsetHeight } = event.currentTarget || {};
     const scrollThreshold = scrollTop + offsetHeight + 1;
-    console.log(parseInt(scrollThreshold), scrollHeight)
-    
+    console.log(parseInt(scrollThreshold), scrollHeight);
+
     if (scrollThreshold > scrollHeight) {
-      let newMovie = [...movieLists];
+      let newMovies = [...movieLists];
       const url = `https://www.omdbapi.com/?apikey=3fea2cf0&s=star&type=movie&page=${
         page + 1
       }`;
@@ -47,8 +49,8 @@ export default function App() {
         .catch((err) => err);
 
       if (data) {
-        newMovie = newMovie.concat(data)
-        setMovieLists(newMovie);
+        newMovies = newMovies.concat(data);
+        setMovieLists(newMovies);
         setPage((page) => page + 1);
       }
     }
@@ -70,27 +72,40 @@ export default function App() {
     handleGetMovies();
   }, [handleGetMovies]);
 
+  const Test = () => {
+    return (
+      <div className="wrapper" onScroll={handleInfiniteScroll}>
+        <div className="introduction">
+          <h1>Movie App</h1>
+          <p>{'test'}</p>
+        </div>
+        <div className="content">
+          {movieLists.length &&
+            movieLists.map((movie, movieIndex) => (
+              <MovieCard
+                movie={movie}
+                key={movieIndex}
+                showDeleteIcon={false}
+                onDeleteMovie={() => {}}
+              />
+            ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="container">
-      <HeaderSidebar menus={menus}>
-        <div className="wrapper" onScroll={handleInfiniteScroll}>
-          <div className="introduction">
-            <h1>Movie App</h1>
-            <p>{'test'}</p>
-          </div>
-          <div className="content">
-            {movieLists.length &&
-              movieLists.map((movie, movieIndex) => (
-                <MovieCard
-                  movie={movie}
-                  key={movieIndex}
-                  showDeleteIcon={false}
-                  onDeleteMovie={() => {}}
-                />
-              ))}
-          </div>
-        </div>
-      </HeaderSidebar>
+      <Router>
+        <HeaderSidebar menus={menus}>
+          <Routes>
+            <Route path="/" element={<Test />} />
+
+            <Route exact path="/login" element={<MovieListPage />} />
+            {/* <Route path="*" element={<NotFound />} /> */}
+          </Routes>
+        </HeaderSidebar>
+      </Router>
     </div>
   );
 }
