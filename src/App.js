@@ -1,18 +1,16 @@
-import logo from './logo.svg';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 // assets
 import homeIcon from '../public/assets/home-icon.png';
 import starIcon from '../public/assets/star-icon.png';
 
 // styles
-import styles from '../styles/Home.module.scss';
-
+import './App.scss';
 
 // components
 import HeaderSidebar from '../src/components/HeaderSidebar';
 import MovieCard from '../src/components/MovieCard/MovieCard';
-
+import axios from 'axios';
 
 export default function App() {
   const [movieLists, setMovieLists] = useState([]);
@@ -37,39 +35,45 @@ export default function App() {
     const scrollThreshold = scrollTop + offsetHeight + 10;
 
     if (scrollThreshold > scrollHeight) {
-      const data = await fetch(
-        'https://private-2fff44-bncfetest.apiary-mock.com/movies',
-        {
-          method: 'GET',
-        }
-      )
-        .then((response) => {
-          if (response.status === 200) {
-            console.log('Success fetch the data');
-            return response.json();
-          }
-          console.log('Failed fetch the data');
+      const data = await axios
+        .get('https://private-2fff44-bncfetest.apiary-mock.com/movies', {
+          apiKey: '3fea2cf0',
         })
         .then((result) => result)
         .catch((err) => err);
 
       if (data.data) {
-        setMovieLists(movieLists.concat(data.data.slice(0, 10)));
+        setMovieLists(data.data);
       }
     }
   };
 
+  const handleGetMovies = useCallback(async () => {
+    const data = await axios
+      .get('https://private-2fff44-bncfetest.apiary-mock.com/movies', {
+        apiKey: '3fea2cf0',
+      })
+      .then((result) => result)
+      .catch((err) => err);
+
+    if (data.data) {
+      setMovieLists(data.data);
+    }
+  }, []);
+
+  useEffect(() => {
+    handleGetMovies();
+  }, [handleGetMovies]);
+
   return (
-    <div className={styles.container}>
-      <HeaderSidebar
-        menus={menus}
-      >
-        <div className={styles.wrapper} onScroll={handleInfiniteScroll}>
-          <div className={styles.introduction}>
+    <div className="container">
+      <HeaderSidebar menus={menus}>
+        <div className="wrapper" onScroll={handleInfiniteScroll}>
+          <div className="introduction">
             <h1>Movie App</h1>
-            <p>{"test"}</p>
+            <p>{'test'}</p>
           </div>
-          <div className={styles.content}>
+          <div className="content">
             {movieLists.length &&
               movieLists.map((movie, movieIndex) => (
                 <MovieCard
