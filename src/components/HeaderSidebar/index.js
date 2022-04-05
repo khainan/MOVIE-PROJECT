@@ -40,9 +40,12 @@ const HeaderSidebar = (props) => {
       <div className="dashboard-header-sidebar" ref={ref}>
         <div className="dashboard-header">
           <div className="dashboard-header-logo">
-            <div className="hamburger-icon">
-              <img src={hamburgerIcon} alt="" onClick={handleOpenSidebar} />
-            </div>
+            <img
+              className="hamburger-icon"
+              src={hamburgerIcon}
+              alt=""
+              onClick={handleOpenSidebar}
+            />
           </div>
           <div className="dashboard-header-user">
             <p>

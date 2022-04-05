@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 // assets
-import homeIcon from '../public/assets/home-icon.png';
-import starIcon from '../public/assets/star-icon.png';
+import homeIcon from './home-icon.png';
+import starIcon from './star-icon.png';
 
 // styles
 import './App.scss';
@@ -14,6 +14,7 @@ import axios from 'axios';
 
 export default function App() {
   const [movieLists, setMovieLists] = useState([]);
+  const [page, setPage] = useState(1);
 
   const menus = [
     {
@@ -32,32 +33,36 @@ export default function App() {
 
   const handleInfiniteScroll = async (event) => {
     const { scrollHeight, scrollTop, offsetHeight } = event.currentTarget || {};
-    const scrollThreshold = scrollTop + offsetHeight + 10;
-
+    const scrollThreshold = scrollTop + offsetHeight + 1;
+    console.log(parseInt(scrollThreshold), scrollHeight)
+    
     if (scrollThreshold > scrollHeight) {
+      let newMovie = [...movieLists];
+      const url = `https://www.omdbapi.com/?apikey=3fea2cf0&s=star&type=movie&page=${
+        page + 1
+      }`;
       const data = await axios
-        .get('https://private-2fff44-bncfetest.apiary-mock.com/movies', {
-          apiKey: '3fea2cf0',
-        })
-        .then((result) => result)
+        .get(url)
+        .then((result) => result.data.Search)
         .catch((err) => err);
 
-      if (data.data) {
-        setMovieLists(data.data);
+      if (data) {
+        newMovie = newMovie.concat(data)
+        setMovieLists(newMovie);
+        setPage((page) => page + 1);
       }
     }
   };
 
   const handleGetMovies = useCallback(async () => {
+    const url = `https://www.omdbapi.com/?apikey=3fea2cf0&s=star&type=movie&page=${page}`;
     const data = await axios
-      .get('https://private-2fff44-bncfetest.apiary-mock.com/movies', {
-        apiKey: '3fea2cf0',
-      })
-      .then((result) => result)
+      .get(url)
+      .then((result) => result.data.Search)
       .catch((err) => err);
-
-    if (data.data) {
-      setMovieLists(data.data);
+    console.log(data);
+    if (data) {
+      setMovieLists(data);
     }
   }, []);
 
