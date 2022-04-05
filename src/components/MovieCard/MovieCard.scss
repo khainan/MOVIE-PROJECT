@@ -1,0 +1,92 @@
+@media screen and (min-width: 200px) and (max-width: 450px) {
+  .movie-card-container {
+    width: 300px !important;
+    height: 400px !important;
+  }
+}
+
+.movie-card {
+  position: relative;
+}
+
+.movie-card-container {
+  width: 350px;
+  height: 400px;
+  box-shadow: #00000066 0px 2px 4px, #0000004d 0px 7px 13px -3px,
+    #00000033 0px -3px 0px inset;
+  border-radius: 8px;
+  object-fit: contain;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &:hover {
+    .movie-card-content {
+      opacity: 1;
+      right: 12px;
+    }
+  }
+}
+
+.movie-card-rating {
+  position: absolute;
+  top: 4px;
+  right: 0px;
+  display: flex;
+  align-items: center;
+  width: 60px;
+  height: 28px;
+  justify-content: center;
+
+  p {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    margin-left: 4px;
+  }
+}
+
+.movie-card-header {
+  position: absolute;
+  width: calc(100% - 24px);
+  left: 12px;
+  top: 16px;
+  display: flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 8px;
+
+  h4 {
+    color: #fff;
+  }
+}
+
+.movie-card-content {
+  position: absolute;
+  top: 150px;
+  right: 0px;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 8px;
+  border-radius: 8px;
+  opacity: 0;
+  transition: 0.3s;
+
+  > div {
+    margin-bottom: 12px;
+    cursor: pointer;
+
+    &:last-child {
+      margin: 0;
+    }
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+.unlike-icon,
+.views-icon,
+.delete-icon {
+  filter: invert(1);
+}
