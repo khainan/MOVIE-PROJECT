@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'
 
-// icon
+// assets
 import hamburgerIcon from './assets/hamburger-icon.png';
 import userIcon from './assets/user.png';
 
@@ -12,6 +13,7 @@ const HeaderSidebar = (props) => {
   const [open, setOpen] = useState(false);
 
   const ref = useRef(null);
+  const navigate = useNavigate();
 
   const handleOpenSidebar = () => {
     setOpen((sidebar) => !sidebar);
@@ -24,7 +26,7 @@ const HeaderSidebar = (props) => {
   };
 
   const handleChangePage = (path) => {
-    // Router.replace(path);
+    navigate(path)
   };
 
   useEffect(() => {
@@ -49,7 +51,7 @@ const HeaderSidebar = (props) => {
           </div>
           <div className="dashboard-header-user">
             <p>
-              Hello, <span>'User Name'</span>
+              Hello, <span>User Name</span>
             </p>
             <img alt="" src={userIcon} width={24} height={24} />
           </div>

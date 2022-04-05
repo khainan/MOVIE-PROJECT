@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // assets
-import ratingIcon from './assets/rating-icon.png';
 import likeIcon from './assets/like-icon.png';
 import viewsIcon from './assets/views-icon.png';
 import unlikeIcon from './assets/unlike-icon.png';
@@ -15,6 +15,8 @@ const MovieCard = (props) => {
   const [likes, setLikes] = useState([]);
   const { movie, showDeleteIcon, onDeleteMovie } = props || {};
   const { Title, Poster, Year } = movie || {};
+
+  const navigate = useNavigate();
 
   const handleGetLikes = useCallback(() => {
     const likes = localStorage.getItem('likes') || [];
@@ -40,9 +42,7 @@ const MovieCard = (props) => {
 
   const handleClickMovie = () => {
     localStorage.setItem('movieData', JSON.stringify(movie));
-    // Router.push({
-    //   pathname: `/${movie.imdbID}`,
-    // });
+    navigate(`/movie-detail/${movie.imdbID}`);
   };
 
   const handleLikeMovie = () => {

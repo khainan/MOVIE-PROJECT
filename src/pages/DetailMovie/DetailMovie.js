@@ -1,194 +1,142 @@
-import type { NextPage } from 'next';
-import Router from 'next/router';
-import { useState, useEffect, useRef } from 'react';
-import Head from 'next/head';
-import Image from 'next/image';
+import axios from 'axios';
+import { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 // assets
-import homeIcon from '../public/assets/home-icon.png';
-import starIcon from '../public/assets/star-icon.png';
-import arrowLeftIcon from '../public/assets/arrow-left-icon.png';
-
-// components
-import HeaderSidebar from '../src/components/HeaderSidebar';
+import arrowLeftIcon from './assests/arrow-left-icon.png';
 
 // styles
-import styles from '../styles/Home.module.scss';
+import './DetailMovie.scss';
 
-// utils
-import { translate } from '../src/utils/translate';
-
-type Movie = {
-  id: string;
-  title: string;
-  year: number;
-  imageUrl: string;
-  desc: string;
-  duration: string;
-  genre: string;
-  imageLargeUrl: string;
-  rating: number;
-  releaseDate: string;
-  starring: any;
-};
-
-const DetailMoviePage: NextPage<Movie> = () => {
-  const [movieData, setMovieData] = useState<Movie | null>(null);
+export default function DetailMoviePage() {
+  const [movieData, setMovieData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [language, setLanguage] = useState('en');
-  const [showFullscreen, setShowFullscreen] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
-  const ref = useRef<HTMLDivElement>(null);
-  const menus = [
-    {
-      icon: homeIcon,
-      key: 'home',
-      path: '/',
-      title: 'Home',
-    },
-    {
-      icon: starIcon,
-      key: 'favorite',
-      path: '/favorite',
-      title: 'Favorite',
-    },
-  ];
+  const navigate = useNavigate();
+  const params = useParams();
+  const { movieId } = params;
 
-  const handleOutsideClick = (e: any) => {
-    if (ref.current && !ref.current.contains(e.target) && showFullscreen) {
-      setShowFullscreen(false);
+  const handleGetMovieData = useCallback(async () => {
+    const url = `https://www.omdbapi.com/?apikey=3fea2cf0&i=${movieId}`;
+
+    const data = await axios
+      .get(url)
+      .then((result) => result.data)
+      .catch((err) => err);
+
+    if (data) {
+      const likes = localStorage.getItem('likes') || [];
+      const parsedLikes = likes.length ? JSON.parse(likes) : [];
+
+      parsedLikes.forEach((val) => {
+        if (val.imdbID === data.imdbID) {
+          setIsLiked(true);
+        }
+      });
+
+      setMovieData(data);
+      setLoading(false);
+    }
+  }, []);
+
+  const handleDeleteMovie = () => {
+    const likes = localStorage.getItem('likes') || [];
+    const parsedLikes = likes.length ? JSON.parse(likes) : [];
+
+    let newLikes = parsedLikes;
+    newLikes = newLikes.filter((val) => val.imdbID !== movieId);
+    localStorage.setItem('likes', JSON.stringify(newLikes));
+    setIsLiked(false);
+  };
+
+  const handleLikeMovie = () => {
+    const likes = localStorage.getItem('likes') || [];
+    const parsedLikes = likes.length ? JSON.parse(likes) : [];
+
+    let newLikes = parsedLikes;
+
+    if (!isLiked) {
+      newLikes.push(movieData);
+      localStorage.setItem('likes', JSON.stringify(newLikes));
+      setIsLiked(true);
+    } else {
+      handleDeleteMovie();
     }
   };
 
   useEffect(() => {
-    document.addEventListener('click', handleOutsideClick);
-
-    return () => {
-      document.removeEventListener('click', handleOutsideClick);
-    };
-  });
-
-  const handleGetMovieData = async () => {
-    const { movieId } = Router.query;
-    await fetch(
-      `https://private-2fff44-bncfetest.apiary-mock.com/movies/${movieId}`,
-      {
-        method: 'GET',
-      }
-    )
-      .then((response) => {
-        if (response.status === 200) {
-          return response.json();
-        }
-        console.log('Failed fetch the data');
-      })
-      .then((result) => {
-        if (result) {
-          setMovieData(result.data);
-          setLoading(false);
-        }
-      })
-      .catch(() => Router.back());
-  };
-
-  const handleChangeLanguage = (lang: string) => {
-    setLanguage(lang);
-    localStorage.setItem('lang', lang);
-  };
-
-  const handleFullscreen = () => {
-    setShowFullscreen((prevState) => !prevState);
-  };
-
-  useEffect(() => {
-    localStorage.setItem('lang', language);
     handleGetMovieData();
-  }, [language]);
+  }, [handleGetMovieData]);
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Movie Details</title>
-        <meta name="description" content="Details Page by Movie App" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <HeaderSidebar
-        menus={menus}
-        language={language}
-        onChangeLanguage={(lang: string) => handleChangeLanguage(lang)}
-      >
-        <div className={styles.wrapper}>
-          <div className={styles.back} onClick={() => Router.back()}>
-            <Image src={arrowLeftIcon} width={18} height={18} alt="" />
-            <p>
-              Back to <strong>Home</strong>
-            </p>
-          </div>
-          <div className={styles.introduction}>
-            <h1>MOVIE DETAILS</h1>
-            <p>{translate('detailsIntroduction', language)}</p>
-            <p></p>
-          </div>
-          <div className={styles.content}>
-            {loading ? (
-              <p>Loading...</p>
-            ) : (
-              <div className={styles.details}>
-                <div className={styles.thumbnail}>
-                  <Image
-                    src={movieData ? movieData.imageLargeUrl : ''}
-                    alt=""
-                    width={600}
-                    height={600}
-                    onClick={handleFullscreen}
-                  />
-                </div>
-                <div
-                  className={styles.title}
-                >{`${movieData?.title} (${movieData?.year})`}</div>
-                <div className={styles['card-content']}>
-                  <ul>
-                    <li>
-                      Rating: <strong>{`${movieData?.rating}`}</strong>
-                    </li>
-                    <li>
-                      Genre: <strong>{`${movieData?.genre}`}</strong>
-                    </li>
-                    <li>
-                      Release: <strong>{`${movieData?.releaseDate}`}</strong>
-                    </li>
-                    <li>
-                      Runtime: <strong>{`${movieData?.duration}`}</strong>
-                    </li>
-                  </ul>
-                  <p>
-                    Starring:{' '}
-                    <strong>{`${(movieData ? movieData.starring : []).map(
-                      (star: string) => ` ${star}`
-                    )}`}</strong>
-                    .
-                  </p>
-                  <p>{movieData?.desc}</p>
-                </div>
+    <div className={'wrapper'}>
+      <div className={'back'} onClick={() => navigate('/')}>
+        <img src={arrowLeftIcon} width={18} height={18} alt="" />
+        <p>
+          Back to <strong>Home</strong>
+        </p>
+      </div>
+      <div className={'introduction'}>
+        <h1>MOVIE DETAILS</h1>
+        <p></p>
+      </div>
+      <div className={'content'}>
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className={'details'}>
+            <div className={'thumbnail'}>
+              <img src={movieData.Poster} alt="" className="movie-poster" />
+            </div>
+            <div>
+              <div className="title">{`${movieData?.Title} (${movieData?.Year})`}</div>
+              <div className="card-content">
+                <ul>
+                  <li>
+                    Rating: <strong>{`${movieData?.Ratings[0].Value}`}</strong>
+                  </li>
+                  <li>
+                    Director: <strong>{`${movieData?.Director}`}</strong>
+                  </li>
+                  <li>
+                    Genre: <strong>{`${movieData?.Genre}`}</strong>
+                  </li>
+                  <li>
+                    Release: <strong>{`${movieData?.Released}`}</strong>
+                  </li>
+                  <li>
+                    Runtime: <strong>{`${movieData?.Runtime}`}</strong>
+                  </li>
+                </ul>
+                <p>
+                  Starring: <strong>{movieData.Actors}</strong>.
+                </p>
+                <p>{movieData?.Plot}</p>
               </div>
-            )}
+            </div>
           </div>
-        </div>
-      </HeaderSidebar>
-      {showFullscreen && (
-        <div className={styles.fullscreen}>
-          <div className={styles['fullscreen-content']} ref={ref}>
-            <Image
-              src={movieData ? movieData.imageLargeUrl : ''}
-              alt=""
-              width={1000}
-              height={1000}
-            />
-          </div>
+        )}
+      </div>
+      {!loading && (
+        <div className="button-wrapper">
+          <button
+            className="btn add"
+            disabled={isLiked}
+            style={
+              isLiked
+                ? { opacity: '0.6', background: 'grey', cursor: 'default' }
+                : {}
+            }
+            onClick={handleLikeMovie}
+          >
+            Add to My List
+          </button>
+          <button className="btn delete" onClick={handleDeleteMovie}>
+            Remove from My List
+          </button>
         </div>
       )}
     </div>
   );
-};
-
-export default DetailMoviePage;
+}

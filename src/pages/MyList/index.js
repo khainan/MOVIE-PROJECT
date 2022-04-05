@@ -28,33 +28,30 @@ export default function MyList() {
   }, [handleGetLikes]);
 
   return (
-    <div className="container">
-      <div className="wrapper">
-        <div className="introduction">
-          <h1>Movie App</h1>
-          <p>{'test'}</p>
-        </div>
-        <div className="content">
-          {movieLists.length ? (
-            movieLists.map((movie, movieIndex) => (
-              <MovieCard
-                movie={movie}
-                key={movieIndex}
-                showDeleteIcon
-                onDeleteMovie={(movie) => handleUpdateMovie(movie)}
-              />
-            ))
-          ) : (
-            <div className="empty-favorite">
-              <img alt="" src={starIcon} width={40} height={40} />
-              <h5>You haven't favorite anything</h5>
-              <p>
-                To start show your favorite, try to like some content in
-                <strong>Home</strong>.
-              </p>
-            </div>
-          )}
-        </div>
+    <div className="wrapper">
+      <div className="introduction">
+        <h1>MY MOVIE LISTS</h1>
+      </div>
+      <div className="content">
+        {movieLists.length ? (
+          movieLists.map((movie, movieIndex) => (
+            <MovieCard
+              movie={movie}
+              key={movieIndex}
+              showDeleteIcon
+              onDeleteMovie={(movie) => handleUpdateMovie(movie)}
+            />
+          ))
+        ) : (
+          <div className="empty-favorite">
+            <img alt="" src={starIcon} width={40} height={40} />
+            <h5>You haven't favorite anything</h5>
+            <p>
+              To start show your favorite, try to like some content in{' '}
+              <strong>Home</strong>.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

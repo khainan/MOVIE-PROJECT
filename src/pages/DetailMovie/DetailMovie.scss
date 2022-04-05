@@ -1,0 +1,261 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 94vh;
+  padding: 24px 32px;
+  overflow-y: auto;
+
+  .introduction {
+    margin-bottom: 32px;
+
+    h1 {
+      line-height: 4rem;
+      font-size: 4rem;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      word-break: keep-all;
+      text-align: left;
+    }
+
+    p {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      color: #000;
+      max-width: 1000px;
+    }
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 24px;
+
+  &-header,
+  &-header-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &-header {
+    padding: 24px;
+    background-color: #fff;
+    border-radius: 4px;
+
+    h1 {
+      color: #3a83f6;
+    }
+
+    &-action {
+      min-width: 350px;
+    }
+  }
+
+  &-body {
+    margin-top: 24px;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      margin-right: 16px;
+    }
+  }
+}
+
+.button {
+  min-width: 150px;
+  height: 40px;
+  background-color: #3a83f6;
+  color: #fff;
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-input {
+  position: relative;
+
+  > input {
+    height: 22px;
+    width: 150px;
+    padding: 8px;
+    padding-left: 32px;
+    position: relative;
+    border: 1px solid #eee;
+    border-radius: 4px;
+
+    &:focus {
+      outline: none !important;
+      border: 1px solid #3a83f6;
+      caret-color: #3a83f6;
+    }
+  }
+
+  .search-icon {
+    height: 20px;
+    width: 20px;
+    position: absolute;
+    left: 8px;
+    top: 10px;
+    z-index: 1;
+  }
+}
+
+.details {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+
+  .thumbnail {
+    text-align: center;
+    margin-right: 24px;
+  }
+
+  .title {
+    font-size: 2rem;
+    line-height: 2rem;
+    font-weight: 600;
+    padding: 12px 0;
+    border-top: 2px solid #da0037;
+    border-bottom: 2px solid #da0037;
+    margin: 16px 0;
+    text-transform: capitalize;
+    margin-top: 0;
+  }
+
+  .card-content {
+    ul {
+      display: flex;
+      flex-direction: column;
+      flex-wrap: wrap;
+      padding-inline-start: 20px;
+    }
+
+    li {
+      word-break: keep-all;
+      min-width: 20%;
+    }
+
+    strong {
+      text-transform: capitalize;
+    }
+
+    p {
+      text-align: justify;
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.back {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+
+  span,
+  p {
+    cursor: pointer;
+  }
+
+  p {
+    align-self: end;
+    margin-left: 4px;
+  }
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.button-wrapper {
+  margin: 24px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+
+  .btn {
+    padding: 16px;
+    min-width: 240px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    border: unset;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.6;
+    }
+
+    &.add {
+      background-color: #3a83f6;
+    }
+
+    &.delete {
+      background-color: #da0037;
+    }
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 900px) {
+  .details {
+    display: block;
+  }
+
+  .thumbnail {
+    margin-bottom: 24px;
+  }
+
+  .content {
+    margin-left: 0px;
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 680px) {
+  .details {
+    display: block;
+  }
+
+  .thumbnail {
+    margin-bottom: 24px;
+  }
+
+  .content {
+    &-header,
+    &-header-action {
+      flex-direction: column;
+      align-items: flex-start;
+      min-width: unset;
+      width: -webkit-fill-available;
+    }
+
+    .button,
+    .search-input {
+      width: 100%;
+
+      input {
+        width: calc(100% - 42px);
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 200px) and (max-width: 450px) {
+  .content-body {
+    flex-direction: column;
+    overflow: hidden;
+  }
+}
